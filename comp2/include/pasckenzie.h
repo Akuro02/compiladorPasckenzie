@@ -8,6 +8,7 @@ typedef enum{
     ERRO,
     KW_PROGRAM,
     kW_SEMICOLON,
+    KW_COMMA,
     KW_COLON,
     KW_OPEN_PARENTHESIS,
     KW_CLOSE_PARENTHESIS,
@@ -45,44 +46,13 @@ typedef struct{
     }atributo;
 }TInfoAtomo;
 
-// VARIAVEIS GLOBAIS ------------------------
-char lexema[20];
-int nLinha;
-char* buffer = "";
 
-TAtomo lookAhead;
-TInfoAtomo infoAtomo;
-
+// Struct para reconhecer palavras chave -----
 typedef struct{
-    const char *keyWord;
-    TAtomo token;
-} kw;
-
-static const kw keywords [] = {
-    {"div", MULTIPLYING_OPERATOR},
-    {"or", RELATIONAL_OPERATOR},
-    {"and", RELATIONAL_OPERATOR},
-    {"not", KW_NOT},
-    {"if", KW_IF},
-    {"then", KW_THEN},
-    {"else", KW_ELSE},
-    {"while", KW_WHILE},
-    {"do", KW_DO},
-    {"begin", KW_BEGIN},
-    {"end", KW_END},
-    {"read", KW_READ},
-    {"write", KW_WRITE},
-    {"var", KW_VAR},
-    {"program", KW_PROGRAM},
-    {"true", KW_TOF},
-    {"false", KW_TOF},
-    {"char", CONSTCHAR},
-    {"integer", CONSTINT},
-    {"boolean", TYPE}
-};
+    char *keyword;
+    TAtomo value;
+} keyword;
 // ------------------------------------------
 
-TInfoAtomo obter_atomo();
-void reconhece_id_kw_const();
-int reconhe_id(TInfoAtomo *infoAtomo);
-void reconhece_numero(TInfoAtomo *infoAtomo);
+void obter_atomo();
+void reconhece_id(TInfoAtomo* infoAtomo);
