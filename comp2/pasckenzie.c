@@ -4,7 +4,7 @@
 char lexema[16];
 int nLinha;
 
-char* buffer = "program teste;\nvar\n	num:integer;\nbegin\n	write(num);\nend.";
+char* buffer;
 
 TAtomo lookAhead;
 TInfoAtomo infoAtomo;
@@ -31,8 +31,26 @@ keyword keywords[] = {
     };
 
 
+static int buffer_read_file(char * filename){
+    FILE *f = fopen(filename, "rb");
+    if(f == NULL){
+        char errorMessage[200]; sprintf(errorMessage, "Erro ao abrir arquivo %s\n", filename);
+        perror(errorMessage); 
+        exit(1);}
+    fseek(f, 0, SEEK_END);
+    size_t size = ftell(f); // pointer foi para o fim do arquivo - ftell determina a posicao do ponteio a partir do inicio (isso é como fazer size = fim do ponteiro - inicio do ponteiro)
+    rewind(f);
+    char* buffer_start = (char*)malloc(size+1);
+    if(!buffer_start){perror("Falha ao criar buffer\n"); fclose(f); exit(1);}
+    size_t r = fread(buffer_start, 1, size, f);
+    fclose(f);
+    buffer_start[r] = '\0';
+    buffer = buffer_start;
+    return 0;
+}
+
+
 TInfoAtomo obter_atomo(){
-    printf("obter_atomo called\n");
     TInfoAtomo infoA;
     infoA.atomo = ERRO;
 
@@ -88,7 +106,6 @@ TInfoAtomo obter_atomo(){
 }
 
 void consome(TAtomo atomo){
-    printf("consome called\n");
     if(lookAhead == atomo){
         infoAtomo = obter_atomo();
         lookAhead = infoAtomo.atomo;
@@ -218,14 +235,19 @@ void reconhece_specialChars(TInfoAtomo *infoAtomo){
         if(strncmp(values[i].key, buffer, len) == 0){
             infoAtomo->atomo = values[i].value;
             buffer += len;
-            printf("%i: %s\n", infoAtomo->linha, strMensagem[RELATIONAL_OPERATOR]);
+            printf("%i: %s\n", infoAtomo->linha, strMensagem[values[i].value]);
             return;
         }
     }
     return;
 }
 
-int main(){
+int main(int argc, char* argv[]){
+    if(argc != 2){
+        printf("Entrada invalida - Utilize o formato: ./nomeDoEXE <nomeDoArquivoPasckenzie>\n");
+        exit(1);
+    }
+    buffer_read_file(argv[1]);
     printf("Analisando...\n");
     nLinha = 1;
     infoAtomo = obter_atomo();
@@ -236,9 +258,7 @@ int main(){
 }
 
 void program(){
-    printf("program called\n");
     consome(KW_PROGRAM);
-    printf("program consumed\n");
     consome(IDENTIFIER);
     consome(kW_SEMICOLON);
     block();
@@ -246,13 +266,11 @@ void program(){
 }
 
 void block(){
-    printf("Block called\n");
     variable_declaration_part();
     statement_part();
 }
 
 void variable_declaration_part(){
-    printf("variable_declaration_part called\n");
     if(lookAhead == KW_VAR){
         consome(KW_VAR);
         variable_declaration();
@@ -265,20 +283,16 @@ void variable_declaration_part(){
 }
 
 void variable_declaration(){
-    printf("variable_declaration called\n");
     consome(IDENTIFIER);
     while(lookAhead == KW_COMMA){
         consome(KW_COMMA);
-        printf("\n $$$$$$$$$$$$$$ \n");
         consome(IDENTIFIER);
-        printf("\n $$$$$$$$$$$$$$ \n");
     }
     consome(KW_COLON);
     consome(TYPE);
 }
 
 void statement_part(){
-    printf("statement_part called\n");
     consome(KW_BEGIN);
     statement();
     while(lookAhead == kW_SEMICOLON){
@@ -289,7 +303,6 @@ void statement_part(){
 }
 
 void statement(){
-    printf("statement called\n");
     if(lookAhead == IDENTIFIER){
         assignment_statement();
         return;
@@ -313,7 +326,6 @@ void statement(){
 }
 
 void factor(){
-    printf("factor called\n");
     if(lookAhead == IDENTIFIER){
         consome(IDENTIFIER);
         return;
@@ -344,7 +356,6 @@ void factor(){
 }
 
 void term(){
-    printf("term called\n");
     factor();
     while(lookAhead == MULTIPLYING_OPERATOR){
         consome(MULTIPLYING_OPERATOR);
@@ -353,7 +364,6 @@ void term(){
 }
 
 void simple_expression(){
-    printf("simple_expression called\n");
     term();
     while(lookAhead == ADDING_OPERATOR){
         consome(ADDING_OPERATOR);
@@ -362,7 +372,6 @@ void simple_expression(){
 }
 
 void expression(){
-    printf("expression called\n");
     simple_expression();
     if(lookAhead == RELATIONAL_OPERATOR){
         consome(RELATIONAL_OPERATOR);
@@ -371,16 +380,12 @@ void expression(){
 }
 
 void assignment_statement(){
-    printf("assignment_statement called\n");
-    printf("SHOULD BE IDENTIFIER: %s\n", strMensagem[lookAhead]);
     consome(IDENTIFIER);
-    printf("SHOULD BE ASSIGN: %s\n", strMensagem[lookAhead]);
     consome(ASSIGN);
     expression();
 }
 
 void read_statement(){
-    printf("read_statement called\n");
     consome(KW_READ);
     consome(KW_OPEN_PARENTHESIS);
     consome(IDENTIFIER);
@@ -392,7 +397,6 @@ void read_statement(){
 }
 
 void write_statement(){
-    printf("write_statement called\n");
     consome(KW_WRITE);
     consome(KW_OPEN_PARENTHESIS);
     consome(IDENTIFIER);
@@ -404,7 +408,6 @@ void write_statement(){
 }
 
 void if_statement(){
-    printf("if_statement called\n");
     consome(KW_IF);
     expression();
     consome(KW_THEN);
@@ -416,7 +419,6 @@ void if_statement(){
 }
 
 void while_statement(){
-    printf("while_statement called\n");
     consome(KW_WHILE);
     expression();
     consome(KW_DO);
