@@ -1,4 +1,4 @@
-// Autores:
+// AUTORES
 // Marco Antonio de Camargo - 10418309
 // Nicolas Henriques de Almeida - 10418357
 
@@ -49,6 +49,16 @@ static int buffer_read_file(char * filename){
     size_t r = fread(buffer_start, 1, size, f);
     fclose(f);
     buffer_start[r] = '\0';
+    // Remover \r que podem vir acompanhados dos \n quando utiliza Windows
+    char *src = buffer_start, *dst = buffer_start;
+    while (*src) {
+        if (*src != '\r') {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+    //
     buffer = buffer_start;
     return 0;
 }
@@ -427,5 +437,4 @@ void while_statement(){
     expression();
     consome(KW_DO);
     statement();
-
 }
