@@ -1,3 +1,7 @@
+// Autores:
+// Marco Antonio de Camargo - 10418309
+// Nicolas Henriques de Almeida - 10418357
+
 #include "include/pasckenzie.h"
 
 // VARIAVEIS GLOBAIS ------------------------
@@ -423,4 +427,5 @@ void while_statement(){
     expression();
     consome(KW_DO);
     statement();
+
 }
