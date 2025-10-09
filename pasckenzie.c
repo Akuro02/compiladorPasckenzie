@@ -104,7 +104,9 @@ TInfoAtomo obter_atomo(){
 
     infoA.linha = nLinha;
 
-    if(islower(*buffer) || *buffer == '_'){
+    printf("DEBUG: buffer atual: '%c'\n", *buffer);  
+
+    if(islower(*buffer)|| isupper(*buffer) || *buffer == '_'){
         reconhece_id(&infoA);
     }
     else if(isdigit(*buffer)){
@@ -116,6 +118,7 @@ TInfoAtomo obter_atomo(){
     else{
         reconhece_specialChars(&infoA);
     }
+
     return infoA;
 }
 
@@ -145,6 +148,7 @@ void reconhece_id(TInfoAtomo* infoA){
         strncpy(lexema, ini_lexema,buffer-ini_lexema); // salvamos ini_lexema como inicio do buffer e salvamos deste ponto até onde o buffer esta agora (uma forma de copiar a string)
         lexema[buffer-ini_lexema] = '\0';
         strcpy(infoA->atributo.id, lexema);
+        printf("DEBUG: lexema copiado: %s\n", lexema);
         size_t keywordSize = sizeof(keywords)/sizeof(keyword);
         if(lexema[0] != '_'){ // palavras chave nunca começam com _, então se a string nova começar com _ ela pode só pular a verificação
             for(int i = 0; i < keywordSize; i++){
@@ -173,7 +177,7 @@ void reconhece_num(TInfoAtomo *infoAtomo){
             buffer++;
             goto q2;
         }
-        return;
+        goto q3;
     q2:
         if(isdigit(*buffer)){
             buffer++;
@@ -335,6 +339,10 @@ void statement(){
     }
     if(lookAhead == KW_WHILE){
         while_statement();
+        return;
+    }
+    if(lookAhead == KW_BEGIN){
+        statement_part();
         return;
     }
 }
