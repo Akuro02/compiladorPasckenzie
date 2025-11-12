@@ -31,11 +31,14 @@ keyword keywords[] = {
     {"not", KW_NOT},
     {"true", KW_TOF},
     {"false", KW_TOF},
-    {"end", KW_END}
+    {"end", KW_END},
+    {"or", RELATIONAL_OPERATOR},
+    {"and", RELATIONAL_OPERATOR},
+    {"div", MULTIPLYING_OPERATOR}
     };
 
 
-static int buffer_read_file(char * filename){
+static int buffer_read_file(char* filename){
     FILE *f = fopen(filename, "rb");
     if(f == NULL){
         char errorMessage[200]; sprintf(errorMessage, "Erro ao abrir arquivo %s\n", filename);
@@ -102,9 +105,7 @@ TInfoAtomo obter_atomo(){
         break;
     }
 
-    infoA.linha = nLinha;
-
-    printf("DEBUG: buffer atual: '%c'\n", *buffer);  
+    infoA.linha = nLinha; 
 
     if(islower(*buffer)|| isupper(*buffer) || *buffer == '_'){
         reconhece_id(&infoA);
@@ -142,13 +143,9 @@ void reconhece_id(TInfoAtomo* infoA){
             buffer++;
             goto q1;
         }
-        if(isupper(*buffer))
-            return;
-        
         strncpy(lexema, ini_lexema,buffer-ini_lexema); // salvamos ini_lexema como inicio do buffer e salvamos deste ponto até onde o buffer esta agora (uma forma de copiar a string)
         lexema[buffer-ini_lexema] = '\0';
         strcpy(infoA->atributo.id, lexema);
-        printf("DEBUG: lexema copiado: %s\n", lexema);
         size_t keywordSize = sizeof(keywords)/sizeof(keyword);
         if(lexema[0] != '_'){ // palavras chave nunca começam com _, então se a string nova começar com _ ela pode só pular a verificação
             for(int i = 0; i < keywordSize; i++){
@@ -166,19 +163,24 @@ void reconhece_id(TInfoAtomo* infoA){
 }
 
 void reconhece_num(TInfoAtomo *infoAtomo){
+    // digito+ ( (d (+|ε) digito+) |ε )
     char *ini_lexema = buffer;
+    char *ptrPostDNum = NULL;
+    char postDNum[15];
 
     q1:
         if(isdigit(*buffer)){
             buffer++;
             goto q1;
         }
-        if(*buffer == '.'){
+        if(*buffer == 'd'){
             buffer++;
+            if(*buffer == '+') {buffer++;}
             goto q2;
         }
-        goto q3;
+        goto end;
     q2:
+        ptrPostDNum = buffer;
         if(isdigit(*buffer)){
             buffer++;
             goto q3;
@@ -189,14 +191,32 @@ void reconhece_num(TInfoAtomo *infoAtomo){
             buffer++;
             goto q3;
         }
-        if(isalpha(*buffer)){
+
+        if(buffer - ini_lexema >= 15){
+            printf("Erro na linha %i - Numero grande demais\n", nLinha);
             return;
         }
-    
+
+    end:
         strncpy(lexema, ini_lexema, buffer-ini_lexema);
         lexema[buffer-ini_lexema] = '\0';
 
-        infoAtomo->atributo.constInt = atof(lexema);
+        float num;
+        
+        if (ptrPostDNum != NULL){ // transforma o numero escrito na conversao (digito d (+|ε) digito+) em float correspondente
+            char firstPart[15]; // separando a parte antes do 'd'
+            strncpy(firstPart, lexema, ptrPostDNum - ini_lexema - 1); // -1 para nao copiar o 'd'
+            firstPart[ptrPostDNum - ini_lexema - 1] = '\0';
+            num = atof(firstPart);
+            strncpy(postDNum, ptrPostDNum, buffer - ptrPostDNum); // copiar a parte depois do 'd'
+            postDNum[buffer - ptrPostDNum] = '\0';
+            float dNum = atof(postDNum);
+            num = num * pow(10, dNum); // criar o numero final
+        }else{
+            num = atof(lexema); // se nao tiver 'd', so transforma o numero normalmente
+        }
+
+        infoAtomo->atributo.constInt = num;
 
         infoAtomo->atomo = CONSTINT;
         printf("%i: %s: %f\n", infoAtomo->linha, strMensagem[CONSTINT], infoAtomo->atributo.constInt);
@@ -233,12 +253,9 @@ void reconhece_specialChars(TInfoAtomo *infoAtomo){
         {"<=", RELATIONAL_OPERATOR},
         {">=", RELATIONAL_OPERATOR},
         {"=", RELATIONAL_OPERATOR},
-        {"or", RELATIONAL_OPERATOR},
-        {"and", RELATIONAL_OPERATOR},
         {"+", ADDING_OPERATOR},
         {"-", ADDING_OPERATOR},
-        {"*", MULTIPLYING_OPERATOR},
-        {"div", MULTIPLYING_OPERATOR}
+        {"*", MULTIPLYING_OPERATOR}
     };
 
     if(buffer == NULL || *buffer == '\0'){
@@ -345,6 +362,8 @@ void statement(){
         statement_part();
         return;
     }
+    printf("Erro sintatico\nEsperado <statement> - Entregue[%s]", strMensagem[lookAhead]);
+    exit(1);
 }
 
 void factor(){

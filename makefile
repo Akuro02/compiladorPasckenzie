@@ -1,5 +1,5 @@
 pasckenzie: pasckenzie.c
-	gcc -Wall -Wno-unused-result -g -Og pasckenzie.c -o compilador
+	gcc -Wall -Wno-unused-result -g -Og pasckenzie.c -o compilador -lm
 
 test: compilador
 	./compilador programaTeste.txt

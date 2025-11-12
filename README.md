@@ -25,7 +25,7 @@ make pasckenzie
 - Isso irá criar o executável `compilador`
 ### Usando gcc manualmente
 ```
-gcc -Wall -Wno-unused-result -g -Og pasckenzie.c -o compilador
+gcc -Wall -Wno-unused-result -g -Og pasckenzie.c -o compilador -lm
 ```
 
 ## Execução

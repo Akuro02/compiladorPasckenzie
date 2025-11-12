@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h> //atof
+#include <math.h>
 #include <stddef.h>
 
 typedef enum{
