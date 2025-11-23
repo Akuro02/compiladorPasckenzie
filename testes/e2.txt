@@ -1,6 +1,6 @@
 program e2;
 
-var (*erro palavra reservada*)
+Var (*erro palavra reservada*)
      a,b,c : integer;
 	d : char;
 begin
