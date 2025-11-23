@@ -5,6 +5,20 @@
 #include <math.h>
 #include <stddef.h>
 
+#define PRIME_NUMBER 211
+
+typedef struct _TNo{
+    char ID[16];
+    int endereco;
+    struct _TNo *prox;
+}  TNo;
+
+typedef struct {
+    TNo *entradas[PRIME_NUMBER];
+} TTabelaSimbolos;
+
+
+
 typedef enum{
     ERRO,
     KW_PROGRAM,
@@ -109,3 +123,10 @@ void read_statement();
 void write_statement();
 void if_statement();
 void while_statement();
+
+void init_tabela_simbolos();
+int hashMack(char *str);
+void insere_tabela_simbolos(char *id);
+int busca_tabela_simbolos(char *id);
+int proximo_rotulo();
+void printfTabelaSimbolos();

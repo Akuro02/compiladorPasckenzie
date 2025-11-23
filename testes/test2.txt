@@ -1,0 +1,12 @@
+program t4;
+var 
+  ax, bh, maior : integer;
+	
+begin
+   ax := 1;
+    bh := 2;
+    if ax > bh then
+        maior := ax
+    else
+        maior := bh
+end.

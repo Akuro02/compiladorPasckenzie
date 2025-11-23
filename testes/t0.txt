@@ -1,4 +1,6 @@
 program t0;
+var
+  sigma: integer;
 begin
-  write(a)
+  write(sigma)
 end.
