@@ -91,7 +91,7 @@ TInfoAtomo obter_atomo(){
         }
 
         if(buffer[0] == '(' && buffer[1] == '*'){
-            // int linhaIni = nLinha; [RE-ADD LATER]
+            // int linhaIni = nLinha; [PRINT REFERENTE À PARTE 1 DO PROJETO]
             buffer += 2;
             while(*buffer != '\0'){
                 if(buffer[0] == '*' && buffer[1] == ')'){
@@ -103,7 +103,7 @@ TInfoAtomo obter_atomo(){
                 }
                 buffer++;
             }
-            // printf("%i-%i: Comentario\n", linhaIni, nLinha); [RE-ADD LATER]
+            // printf("%i-%i: Comentario\n", linhaIni, nLinha); [PRINT REFERENTE À PARTE 1 DO PROJETO]
             continue;
         }
         break;
@@ -154,13 +154,13 @@ void reconhece_id(TInfoAtomo* infoA){
         if(lexema[0] != '_'){ // palavras chave nunca começam com _, então se a string nova começar com _ ela pode só pular a verificação
             for(int i = 0; i < keywordSize; i++){
                 if(strcmp(lexema, keywords[i].keyword) == 0){
-                    // printf("%i: %s\n", infoA->linha, keywords[i].keyword); [RE-ADD LATER]
+                    // printf("%i: %s\n", infoA->linha, keywords[i].keyword); [PRINT REFERENTE À PARTE 1 DO PROJETO]
                     infoA->atomo = keywords[i].value;
                     return;
                 }
             }
         }
-        // printf("%i: %s: %s\n", infoA->linha, strMensagem[IDENTIFIER] ,infoA->atributo.id); [RE-ADD LATER]
+        // printf("%i: %s: %s\n", infoA->linha, strMensagem[IDENTIFIER] ,infoA->atributo.id); [PRINT REFERENTE À PARTE 1 DO PROJETO]
         infoA->atomo = IDENTIFIER;
         return;
 
@@ -223,7 +223,7 @@ void reconhece_num(TInfoAtomo *infoAtomo){
         infoAtomo->atributo.constInt = num;
 
         infoAtomo->atomo = CONSTINT;
-        // printf("%i: %s: %f\n", infoAtomo->linha, strMensagem[CONSTINT], infoAtomo->atributo.constInt); [RE-ADD LATER]
+        // printf("%i: %s: %f\n", infoAtomo->linha, strMensagem[CONSTINT], infoAtomo->atributo.constInt); [PRINT REFERENTE À PARTE 1 DO PROJETO]
 
         return;
 }
@@ -239,7 +239,7 @@ void reconhece_char(TInfoAtomo *infoA){
     buffer++;
     infoA->atributo.constChar = c;
     infoA->atomo = CONSTCHAR;
-    // printf("%i: %s: '%c'\n", infoA->linha, strMensagem[CONSTCHAR], c); [RE-ADD LATER]
+    // printf("%i: %s: '%c'\n", infoA->linha, strMensagem[CONSTCHAR], c); [PRINT REFERENTE À PARTE 1 DO PROJETO]
 }
 
 void reconhece_specialChars(TInfoAtomo *infoAtomo){
@@ -275,7 +275,7 @@ void reconhece_specialChars(TInfoAtomo *infoAtomo){
             infoAtomo->atomo = values[i].value;
             strcpy(infoAtomo->atributo.id, values[i].key);
             buffer += len;
-            // printf("%i: %s\n", infoAtomo->linha, strMensagem[values[i].value]); [RE-ADD LATER]
+            // printf("%i: %s\n", infoAtomo->linha, strMensagem[values[i].value]); [PRINT REFERENTE À PARTE 1 DO PROJETO]
             return;
         }
     }
@@ -369,7 +369,7 @@ int main(int argc, char* argv[]){
 
     printfTabelaSimbolos();
 
-    // printf("%i linhas analisadas, programa sintaticamente correto\n", nLinha); [RE-ADD LATER]
+    // printf("%i linhas analisadas, programa sintaticamente correto\n", nLinha); [PRINT REFERENTE À PARTE 1 DO PROJETO]
 }
 
 void program(){
