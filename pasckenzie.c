@@ -491,6 +491,11 @@ void factor(){
         return;
     }
     if(lookAhead == KW_TOF){
+        if(strcmp(infoAtomo.atributo.id, "true") == 0){
+            printf("CRCT 1\n");
+        } else {
+            printf("CRCT 0\n");
+        }
         consome(KW_TOF);
         return;
     }

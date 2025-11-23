@@ -1,6 +1,7 @@
 program t0;
 var
-  sigma: integer;
+  s, n: integer;
 begin
-  write(sigma)
+  while (true) do
+    s := s + 3 * s
 end.
